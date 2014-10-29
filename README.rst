@@ -1,5 +1,6 @@
-count special multivariate
-==========================
+**************************
+Count Special Multivariate
+**************************
 
 This Sage-module computes generating functions for the number of some
 special multivariate polynomials over finite fields.
