@@ -66,8 +66,9 @@ def w_plot(r,n_list):
 # 3. generating functions P, R, I, S, Q, E, A and their coefficients
 # ==================================================================
 
-def P(r,n,q):
-# \# P_{r,n}(q)
+def P(r, n, q):
+    '''number of monic polynomials in r variables at degree n over GF(q); denoted \# P_{r,n}(q) in the accompanying paper.
+    '''
     return q^(b(r,n)-1)*(1-q^(-b(r-1,n)))/(1-q^(-1))
 
 def PP(r,z,N):
@@ -75,44 +76,44 @@ def PP(r,z,N):
     return sum(P(r,i,q)*z^i for i in range(0,N+1)).simplify_full()
 
 def II(r,z,N):
-# generating function for irreducible polynomials up to and including degree N
+# generating function for irreducible monic polynomials up to and including degree N
     S = sum(moebius(k)/k*log(PP(r,z^k,N)) for k in range(1,N+1)) # check that looking up to degree N is enough
     S = S.taylor(z,0,N)
     return S.simplify_full()
 
 def RR(r,z,N):
-# generating function for reducible polynomials up to and including degree N
+# generating function for reducible monic polynomials up to and including degree N
     S = PP(r,z,N) - II(r,z,N)
     S = S.taylor(z,0,N)
     return S.simplify_full()
 
 def SS(r,s,z,N):
-    '''generating function for s-powerful polynomials up to and including degree N'''
+    '''generating function for s-powerful monic polynomials up to and including degree N'''
     S = PP(r,z,N)/PP(r,z^s,N) # is it enough to look up to degree N in the denominator
     S = S.taylor(z,0,N)
     return S.simplify_full()
 
 def QQ(r,s,z,N):
-# generating function for s-power*less* polynomials up to and including degree N
+# generating function for s-power*less* monic polynomials up to and including degree N
     S = PP(r,z,N) - SS(r,s,z,N)
     S = S.taylor(z,0,N)
     return S.simplify_full()
 
-def A(r,n,q):
-# \# A_{r,n}(q)
+def A(r, n, q):
+    '''number of absolutely irreducible monic polynomials in r variables at degree n over GF(q)'''
     if n == 0:
         return 0
     S = II(r,z,n)
     return sum(sum(moebius(s)*S.coeff(z^(n/k)).substitute(q=q^s) for s in divisors(k))/k for k in divisors(n))
 
-# this function call can be optimized.  A -- and therefore II is called to often.
+# TODO this function call can be optimized.  A -- and therefore II is called to often.
 
 def AA(r,z,N):
-# generating function for A truncated at degree N
+    '''generating function for A truncated at degree N.'''
     return sum(A(r,i,q)*z^i for i in range(0,N+1)).simplify_full()
 
 def EE(r,z,N):
-# generating function for E truncated at degree N
+    '''generating function for the number of relatively irreducible monic polynomials truncated at degree N'''
     return II(r,z,N)-AA(r,z,N)
 
 # extract the coefficients by AA.coeff(z^n).simplify_full()
